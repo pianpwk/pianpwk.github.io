@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- <title>Topic modeling & sentiment analysis for the Cornell Daily Sun - pianpwk</title> -->
+  <title>pianpwk</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="../../css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../css/bootstrap-social.css" rel="stylesheet">
+  <script src="../../js/jquery.min.js"></script>
+  <script src="https://kit.fontawesome.com/d6c42e360e.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <!-- Custom styles for this template -->
+  <link href="style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="../../index.html">pianpwk</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="../../index.html">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../about.html">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container-fluid">
+
+    <div class="row">
+
+      <!-- Post Content Column -->
+      <div class="col-lg-9">
+
+        <!-- Title -->
+        <!-- <h1 class="mt-4">Topic modeling & sentiment analysis for the Cornell Daily Sun</h1> -->
+        <h1 class="mt-4">
+          What goes on in the Cornell Daily Sun?
+        </h1>
+
+        <!-- <div class="banner">
+          <img src="cds_header.png" style="width: 100%; height: auto;">
+        </div> -->
+
+        <hr>
+
+        <!-- Date/Time -->
+        <p>April 18, 2020</p>
+
+        <hr>
+
+        <!-- Preview Image -->
+        <!-- <img class="img-fluid rounded" src="http://placehold.it/900x300" alt=""> -->
+        <!-- <hr> -->
+
+        <!-- Post Content -->
+        <p></p>
+          The Cornell Daily Sun is the student-run newspaper at Cornell that I'm ashamed to say 
+          I have never read, except for on the rare occasion when someone writes something apparently so outrageous 
+          that it ends up on the meme page (e.g. <a href="https://cornellsun.com/2019/10/16/lim-why-im-choosing-not-to-seek-professional-mental-health-care/">this</a>).
+          I have no idea what goes on in it, I couldn't really tell you what type of content gets published. All I know is there's somewhat debatable mental health opinions 
+          and <a href="https://cornellsun.com/2020/04/06/somewhat-sober-a-guide-to-quesadillas/?utm_source=rss&utm_medium=rss">good quesadilla recipes</a>. 
+          Being the CS major that I am, I decided to find out by crawling 9,700 articles from the Cornell Daily Sun website using Selenium + BeautifulSoup to analyze, instead of, well, 
+          actually reading any of it (to be honest I had been finding an excuse to learn topic modeling + basic NLP and finally get around to setting up a blog during this coronavirus period, 
+          but I think that makes for the better sentence).
+
+        <p></p>
+        <div class="banner">
+          <img src="images/cds_header_red.png" style="width: 100%; height: auto;">
+        </div>
+        <p></p>
+        This is the header for the Daily Sun's website - we'll be looking at the 6 categories demarcated in red, since content in the others are harder to come by. The COVID-19 Briefing section 
+        also got added after I started work for this, so unfortunately there's nothing on that. These articles range from February 2016 to March 2020. Let's see what's going on in this newspaper.
+
+        <p></p>
+        <div class="banner">
+          <div class="inline-block">
+            <img src="images/timeseries_perweek.png" style="width: 78%; height: auto;">
+            <img src="images/categorization.png" style="width: 20%; height: auto;">
+          </div>
+        </div>
+
+        <p></p>
+        For starters, here's the publication for that entire time period, each point representing the total for an entire week. Peaks in the graph correspond to particular events, for example, 
+        the 2016 election, the assault in Collegetown in <a href="https://cornellsun.com/2017/09/15/ithaca-police-arrest-student-for-possible-hate-crime-in-collegetown/">September 2017</a>, 
+        and most recently COVID-19 causing classes to first go online and later be 
+        <a href="https://cornellsun.com/2020/03/13/cornell-suspends-all-classes-effective-at-5-p-m/">postponed</a>. 
+        The seasonal breaks in publication for each year are also visible, with activity significantly reduced during academic breaks - winter, spring, summer, fall, and thanksgiving, in that order.
+        <p></p>
+
+        Now, looking at the topics (kind of the whole point of my doing all this), first focusing on the News section only. The categorization into topics is done roughly, with topic modeling via LDA (Latent Dirichlet Allocation) 
+        and an additional step of post-processing with partial labeling and linear classification. LDA is a technique that performs a "soft" grouping of documents into different topics based on the words used in them, 
+        assigning probability scores for each topic and each document - representing the probability that the document belongs in that topic. For example, a news article with repeated mentions of the words "state", "trump", and "economy" 
+        will likely be assigned a high score for the topic "U.S. & World Politics", while an article mentioning "food", "campus", "business", and "collegetown" will likely end up in the category "Ithaca Campus", and so on. 
+        What it practically means is I don't have to manually label 3,900 news articles on my own. It's not my summer internship anymore. 
+        <p></p>
+        Good starting points for learning about LDA are <a href="https://monkeylearn.com/blog/introduction-to-topic-modeling/">here</a>, 
+        <a href="https://towardsdatascience.com/light-on-math-machine-learning-intuitive-guide-to-latent-dirichlet-allocation-437c81220158">here</a>, and 
+        <a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation">here</a>.
+        Just make sure you don't mistakenly look up Linear Discriminant Analysis instead - I spent 15 minutes reading Ch 4.3 of <i>The Elements of Statistical Learning</i> before realizing it had nothing to do with NLP.
+        <p></p>
+
+        <p>
+          <div class="banner" align="right">
+            <a class="btn btn-outline-dark btn-sm" data-toggle="collapse" href="#collapse_1" role="button" aria-controls="collapseExample">
+              LDA, post-processing, and t-SNE
+            </a>
+          </div>
+        </p>
+        <div class="collapse" id="collapse_1">
+          <sub>
+            <hr>
+            1. The initial LDA topics were generated using gensim's wrapper for 
+            <a href="https://mimno.infosci.cornell.edu/info6150/readings/dynamic_topic_models.pdf">Dynamic Topic Models</a>
+            (which have a really clean formulation for dealing with the time dimension) - 
+            <a href="https://radimrehurek.com/gensim/models/wrappers/dtmmodel.html">gensim.wrappers.dtmmodel</a>.
+            This allows for LDA's topic-word and document-topic distributions to change over time, which suits the modeling of news articles.
+            The number of topics <i>n_topics</i> is selected via grid-search optimizing for 
+            <a href="https://radimrehurek.com/gensim/models/coherencemodel.html">topic coherence</a>,
+            selecting the lowest value of <i>n_topics</i> (10) before the score starts to flatten out.
+            <p></p>
+            2. With the initial LDA outputs, the initial topics were re-assigned into 8 new topics, and manual labeling was done for around 250 articles. 
+            A simple <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">logistic regression</a>
+            model was trained using the LDA probability vectors as X, and the manual labels as Y. The model was then used 
+            for generating predictions for the entire set of articles. 
+            <p></p>
+            3. <a href="https://distill.pub/2016/misread-tsne/">t-SNE</a>
+            was used to generate the datapoints for visualization, using the LDA probability vectors instead of the logistic regression softmax vectors 
+            (for aesthetic reasons - this creates an appearance of skewness in each cluster). To magnify this skewness and make the plots look a tiny bit less like 
+            a typical last-layer feature t-SNE visualization, each input vector was also moved closer to its cluster centroid before running t-SNE. 
+            <hr>
+          </sub>
+        </div>
+        
+        <embed src="https://plotly.com/~pianpwk/1.embed?showlink=false" style="width: 1000px; height: 750px;">
+        <div class="banner">
+          <center>
+            <sub>
+              In this <a href="https://distill.pub/2016/misread-tsne/">t-SNE</a> plot above, each data point represents a single article, each assigned to its highest scoring topic. Points being in the same cluster signify articles that are alike in content, 
+              and articles close together are similar in the types of words used (although distance shown in the plot is not an absolute metric, due to pre-processing steps as well as the nature of t-SNE).
+            </sub>
+          </center>
+        </div>
+        <p></p>
+
+        Running LDA with some post-processing shows 8 topics in the Daily Sun News section. These aren't absolutely distinct or well-defined topics - since 
+        categorization is done based on the distribution of words used, there are obvious overlaps between each of them. The 8 topics found (in no particular order):
+        <p></p>
+        1. Ithaca Campus: events and occurrences on campus, Collegetown, the Commons, and other vicinal areas - the articles typically regard housing issues, openings and closings of local businesses, 
+        construction on campus, snow days, and generally events relevant to Ithaca students - which from personal experience really didn't seem like much. It's pretty incredible they pumped out so much 
+        content on this topic.
+        <p></p>
+        2. S.A. & Campus Politics: this topic revolves around the Student Assembly and the administration (specifically Martha Pollack as of late), regarding elections, bureacratic changes, funding, and administrative decisions. 
+        It also happens to cover interactions between student groups and the S.A./administration - for example, the 
+        <a href="https://cornellsun.com/tag/cgsu/">Graduate Student Union's</a> protests and attempts at unionization were heavily covered in this topic.
+        <p></p>
+        3. Academics: this covers anything from admissions decisions, to departmental personnel changes, to coverage of student experiences, to updates in academic programs. Not the most well-defined topic.
+        <p></p>
+        4. U.S. Politics: interactions between Cornell and politics outside Ithaca - this consists of coverage of events, comments by professors or notable alumni on politics, political figures visiting campus, or 
+        student-led activism at Cornell.
+        <p></p>
+        5. Research & Innovation: achievements of researchers and students - the type of coverage that ends up on Cornell's front page.
+        <p></p>
+        6. Public Health: although this covers all aspects of public health, being Cornell, this focuses on mental health issues & services, with some consideration of healthcare plans and environmental protests, 
+        as well as a surge in early March due to coverage of COVID-19.
+        <p></p>
+        7. Crime: this covers all local crime and legal violations
+        <p></p>
+        8. Arts & Humanities: broadly termed, this encompasses performing arts events, events regarding diversity on campus, events and academic news regarding identity politics, race, and gender, student activism, 
+        as well as vigils and commemorations held at Cornell.
+        <p></p>
+
+        <div class="banner">
+          <img src="images/newstopic_perweek.png" style="width: 100%; height: auto;">
+        </div>
+
+        Visualizing the time-series for certain topics, we see publication clearly spikes in response to notable events - and we also see that the COVID-19 period has generated the largest response from the Sun's writers by a long distance. 
+        The overall COVID-19 response from the Sun was arguably late in a sense, though generally in-line with overall coverage of mainstream news in the U.S., with publication only really 
+        picking up in late February as cases started to rise in the U.S. and in New York State. The first mentions of "coronavirus" or "COVID-19" in any article were on 
+        <a href="https://cornellsun.com/2020/01/27/amid-international-coronavirus-outbreak-even-a-cold-can-cause-panic/">January 27</a> and 
+        <a href="https://cornellsun.com/2020/01/31/history-repeating-itself-spread-of-coronavirus-causes-panic/">January 31</a>, with no mentions until over 3 weeks later on 
+        <a href="https://cornellsun.com/2020/02/25/evolving-viruses-what-does-the-future-hold/">February 25</a>.
+        
+        <div class="banner">
+          <img src="images/covid_timeline.png" style="width: 100%; height: auto;">
+        </div>
+
+        <hr>
+
+        <h6>Sentiment in the Opinion section</h6>
+        <embed src="https://plotly.com/~pianpwk/11.embed?showlink=false" style="width: 1000px; height: 750px;">
+
+        The Opinion section is debatably the most interesting part of the Daily Sun - this is where the best, the worst, and the most extreme opinions come together and unwillingly compete for the ultimate token of unanimous recognition 
+        from the Cornell undergraduate student body - getting your article posted on the Facebook meme page.
+        The nice part about having an opinion section in the newspaper is we can run sentiment analysis on the articles (duh), which approximates the tone and emotion of each piece (e.g. positive, angry, sad), 
+        which can give us a sense of the intent of the writers. This allows us to understand why people are writing in the Sun, what they express about certain people or events, and an idea of the overall sentiment regarding each of the topics.
+        We'd be able to run this on comments received by articles as well if they were available, but unfortunately for this use case the Sun recently removed its comments section 
+        (neither does it make available the engagement statistics for any of the articles).
+        <p></p>
+        Rerunning LDA for the Opinion section articles generates a set of topics quite similar to those in the News section, with the few differences being:
+        <p></p>
+        1. Reflections: these are generally sentimental articles by students describing personal journeys and experiences at Cornell, lessons learnt and advice for other students, 
+        and reflections on things lost and gained, and things that you forgot used to matter before you started college.
+        <p></p>
+        2. Diversity & Identity Politics: this covers inclusion in and beyond Cornell, personal experiences or external events regarding race, gender, and political correctness, 
+        and other reflections regarding identity politics.
+        <p></p>
+        3. Finances: this covers tuition, living costs, financial aid, student debt, monetary decisions from the administration, inequality at Cornell, poverty in the U.S. - generally anything to do with money. 
+        I didn't really expect this to be here, but it's not surprising - $70k per year is A LOT.
+        <p></p>
+        4. Sex & Relationships: this <a href="https://cornellsun.com/category/opinion/sex-on-thursday/">thing</a>
+        <p></p>
+        5. Completely random:
+        <ul>
+          <li>
+            <a href="https://cornellsun.com/2017/04/23/schulman-onions-cabbages-and-cherries-more-fun-than-you-would-think/">SCHULMAN | Onions, Cabbages and Cherries: More Fun Than You Would Think</a>
+          </li>
+          <li>
+            <a href="https://cornellsun.com/2020/03/12/stella-the-s-hath-hitteth-the-fan/">STELLA | The S*** Hath Hitteth the Fan</a>
+          </li>
+          <li>
+            <a href="https://cornellsun.com/2016/08/28/schulman-confessions-of-a-pokemon-master/">SCHULMAN | Confessions of a Pokemon Master</a>
+          </li>
+          <li>
+            <a href="https://cornellsun.com/2018/03/08/hagopian-bob-dylans-a-tool/">HAGOPIAN | Bob Dylan’s a Tool</a>
+          </li>
+          <li>
+            <a href="https://cornellsun.com/2020/02/09/nguyen-the-terrifyingly-tantalizing-trend-thats-tiktok/">NGUYEN | The Terrifyingly Tantalizing Trend that’s TikTok</a>
+          </li>
+        </ul><p></p>
+        I actually kinda enjoyed reading those.
+        <p></p>
+
+        For each of the topics, we can visualize the general sentiment and emotion of the articles in them. This utilizes a combination of traditional sentiment analysis using 
+        <a href="https://darenr.github.io/afinn/">AFINN</a> and tone classification using IBM Watson's 
+        <a href="https://tone-analyzer-demo.ng.bluemix.net/">Tone Analyzer</a>. This gives us a distribution of scores across each tone/sentiment type for each individual article, 
+        allowing for overall analysis of all articles in each topic.
+        <p></p>
+
+        <p>
+          <div class="banner" align="right">
+            <a class="btn btn-outline-dark btn-sm" data-toggle="collapse" href="#collapse_2" role="button" aria-controls="collapseExample">
+              Sentiment distribution per topic
+            </a>
+          </div>
+        </p>
+        <div class="collapse" id="collapse_2">
+          <sub>
+            <hr>
+            AFINN outputs a single real value for each sentence representing its measure of positivity/negativity, while the IBM Tone Analyzer outputs a pruned list of sentiment probabilities 
+            for each sentence (e.g. Analytical: 0.9, Anger: 0.6). The scores are then summed across all sentences in each article. Due to the brittleness of each method 
+            (each is typically used to analyze short pieces of text - tweets/reviews), the score for each emotion is multiplied by &plusmn AFINN score dependent on the emotion
+            (for example, [-] for anger due to it being a negative emotion, and [+] for joy, etc.) and then retained only if the resulting score is positive to avoid 
+            disagreement between the two scoring mechanisms.
+            <hr>
+          </sub>
+        </div>
+
+
+        The violin plots below display the distribution of sentiment for some of the topics.
+        <p></p>
+
+        <div class="banner">
+          <img src="images/op_topics_sentiment.png" style="width: 100%; height: auto;">
+          <center><sub>In these violin plots, each blob captures the range of expression for a certain tone/sentiment. 
+            A top-heavy blob corresponds to a larger prevalence of sentiment (e.g. the black violin plot in Public Health refers to a prevalence of negative sentiment).
+            A tall blob with a longer tail reveals a skewness towards strong sentiment, not necessarily stronger sentiment on average.
+        </div>
+        <p></p>
+        Some things that stand out from the plots: 
+        <p></p>
+        <ul>
+          <li>
+            Reflection articles have a general tendency towards positivity, as well as a tail of high-positivity pieces. 
+            The prevalent theme revolves around striving for positivity, realigning the tendencies and expectations of Cornell culture with personal values and life outside college, 
+            as well as just surviving through tough times during undergraduate life.
+            <p></p>
+            A couple of nice, high-scoring examples on the positivity spectrum are:
+            <ul>
+              <li>
+                <a href="https://cornellsun.com/2017/05/03/russell-things-i-love/">RUSSELL | Things I Love</a>
+              </li>
+              <li>
+                <a href="https://cornellsun.com/2018/03/05/park-on-happiness-and-success/">PARK | On Happiness and Success</a>
+              </li>
+              <li>
+                <a href="https://cornellsun.com/2019/04/15/lieberman-move-to-the-midwest/">LIEBERMAN | Move to the Midwest</a>
+              </li>
+              <li>
+                <a href="https://cornellsun.com/2017/05/01/guest-room-cornell-culture-in-the-crosshairs/">GUEST ROOM | Cornell Culture in the Crosshairs</a>
+              </li>
+            </ul>Wholesome content that I might come back to mid-November when there's 5 prelims a week and 10 inches of snow.
+          </li>
+          <p></p>
+          <li>
+            Articles on politics are received with a notable sense of anger, sadness, and negativity. 
+            The themes in this topic are rather as expected, given both the overall political stance among Cornell undergraduates, 
+            and how phenomenally bizarre U.S. politics has been in the past 4 years:
+            <ul>
+              <li>
+                The Stoneman Douglas shooting in 2018 and gun control: <a href="https://cornellsun.com/2018/02/15/danberg-biggs-kids-with-guns/">DANBERG BIGGS | Kids With Guns</a>
+              </li>
+              <li>
+                Comments on Trump in October 2016: <a href="https://cornellsun.com/2016/10/19/kowalewski-basic-integrity/">KOWALEWSKI | Basic Integrity</a>
+              </li>
+              <li>
+                Reflections a week after the 2016 election: <a href="https://cornellsun.com/2016/11/16/leung-and-so-we-love/">LEUNG | And So We Love</a> 
+              </li>
+              <li>
+                Criticisms of hyperpartisan U.S. politics from an independent: <a href="https://cornellsun.com/2018/01/28/glanzel-an-independent-to-democrats-youre-losing/">GLANZEL | An Independent to Democrats: You’re Losing</a>
+              </li>
+              <li>
+                Dick Cheney being invited to speak at Cornell: <a href="https://cornellsun.com/2018/03/19/guest-room-cornell-welcomes-another-torturer/">GUEST ROOM | Cornell Welcomes Another Torturer</a>
+              </li>
+            </ul>
+          </li>
+          <p></p>
+          <li>
+            The "Public Health" category here tends towards issues of mental health, sexual assault, and crime, which,
+            as expected given the general outcry from the Cornell student body regarding the inadequacy of mental health services, 
+            tends towards strong negative feelings.
+            <ul>
+              <li>
+                Collegetown assault in 2018: <a href="https://cornellsun.com/2017/09/16/editorial-a-reckoning-after-hate-in-collegetown/">EDITORIAL: A Reckoning After Hate in Collegetown</a>
+              </li>
+              <li>
+                Regarding Cornell's Sexual Assault Awareness Week: <a href="https://cornellsun.com/2018/04/16/hubsher-beasts-of-burden/">HUBSHER | Beasts of Burden</a>
+              </li>
+              <li>
+                On suicides: <a href="https://cornellsun.com/2018/04/19/guest-room-saving-face-losing-lives-the-political-importance-of-cornell-suicides/">GUEST ROOM | Saving Face, Losing Lives: The Political Importance of Cornell Suicides</a>
+              </li>
+            </ul>
+            However, the plot surprisingly also shows a long tail of high-positivity articles regarding public health, 
+            which turned out to be a series of <strike>opinion pieces</strike> advertisements for "improved" mental health services from Gannett/Cornell Health staff.
+          </li>
+          <p></p>
+          <li>
+            The Sex on Thursday section I've decided to completely avoid after only looking at the first 10 headlines. Check it out on your own if you really want to.
+          </li>
+        </ul>
+    
+        We can also evaluate the general sentiment for specific entities mentioned in the Opinion section. For example, here's a selection done by filtering for articles 
+        with mentions of the entities below. A thorough analysis would breakdown the timeline and article keywords for each sentiment type, allowing us to assign 
+        correspondence for anomalous expressions of sentiment (e.g. positivity regarding Trump) to particular events or figures. This would avoid the various biases that 
+        presenting only a few articles or a single plot induces, but frankly it's only the Cornell Sun, and honestly no one's gonna read this blog post.
+        <p></p>
+        <div class="banner">
+          <img src="images/entity_sentiment.png" style="width: 100%; height: auto;">
+        </div>
+        <p></p>
+        Pure love for RPCC and Trillium.
+
+        <hr>
+        <!-- <h6>Conclusion</h6>
+        <p></p>
+        What, there's supposed to be a conclusion for this type of thing? -->
+
+      </div>
+
+      <!-- Sidebar Widgets Column -->
+      <div class="col-md-3">
+        <div class="card my-3">
+            <div class="sidebar-module sidebar-module-inset">
+                <figure class="figure">
+                    <img src="../../images/kidme.jpg" class="figure-img rounded" style="width: 100%; height: auto;">
+                </figure>
+                <div class="card-body">
+                    <h5>Pian Pawakapan</h5>
+                    <p>เพียร ภวัครพันธุ์</p>
+                    <p>
+                      <!-- <a href="https://www.twitter.com/pianpwk" style="text-decoration:none;">
+                        <i class="fab fa-twitter fa-lg"></i>
+                      </a> -->
+                      <a href="https://www.github.com/pianpwk" style="text-decoration:none;">
+                        <i class="fab fa-github fa-lg"></i>
+                      </a>
+                      <a href="https://www.kaggle.com/pawakapan" style="text-decoration:none;">
+                        <i class="fab fa-kaggle fa-lg"></i>
+                      </a>
+                      <a href="https://www.linkedin.com/in/pianpwk" style="text-decoration:none;">
+                        <i class="fab fa-linkedin-in fa-lg"></i>
+                      </a>
+                    </p>
+                </div>
+            </div>
+        </div>        
+      </div>
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="../../js/jquery.min.js"></script>
+  <script src="../../js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
