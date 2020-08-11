@@ -1,0 +1,77 @@
+.navbar-brand{
+    font-size: 20px;
+}
+.navbar{
+    font: sans-serif;
+    font-size: 16px;
+    padding-left: 8%;
+    padding-right: 8%;
+    height: 50px;
+}
+body{
+    padding-top: 56px;
+    padding-bottom: 4rem;
+    position: relative;
+}
+.card-body{
+    padding-top: 0%;
+}
+.mt-4{
+    font-size: 24px;
+}
+.col-md-3{
+    padding-top: 2%;
+    padding-right: 8%;
+    font-size: 14px;
+}
+.col-lg-9{
+    padding-top: 2%;
+    padding-left: 8%;
+    padding-right: 2%;
+    font-size: 16px;
+}
+.lead{
+    font-size: 18px;
+}
+.blockquote{
+    font-size: 14px;
+}
+
+.fa-twitter{
+    color:darkgrey;
+}
+.fa-twitter:hover{
+    color: grey;
+}
+.fa-github{
+    color:darkgrey;
+}
+.fa-github:hover{
+    color: grey;
+}
+.fa-kaggle{
+    color:darkgrey;
+}
+.fa-kaggle:hover{
+    color: grey;
+}
+.fa-linkedin-in{
+    color:darkgrey;
+}
+.fa-linkedin-in:hover{
+    color: grey;
+}
+.inline-block {
+    display: inline-block;
+ }
+.center-container{
+    text-align: center;
+}
+.category{
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+}
+#tsne_news{
+    min-width: 100%;
+  }

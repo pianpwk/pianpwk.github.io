@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Simulating the value of replacing players in football - pianpwk</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="../../css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../css/bootstrap-social.css" rel="stylesheet">
+  <script src="../../js/jquery.min.js"></script>
+  <script src="https://kit.fontawesome.com/d6c42e360e.js" crossorigin="anonymous"></script>
+  <script type="text/javascript"
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Custom styles for this template -->
+  <link href="style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="../../index.html">pianpwk</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="../../index.html">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../about.html">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container-fluid">
+
+    <div class="row">
+
+      <!-- Post Content Column -->
+      <div class="col-lg-9">
+
+        <!-- Title -->
+        <h1 class="mt-4">
+          Simulating the value of replacing players in football
+        </h1>
+
+        <hr>
+        July 27, 2020
+        <hr>
+
+        <!-- Date/Time -->
+        <div class="banner" width="100%" style="text-align: center;">
+          <img src="images/diegocosta.jpg" height="360px" />
+          <img src="images/morata.jpg" height="360px" />
+        </div>
+
+        <p></p>
+        Signings in football are hard.
+        <p></p>
+        When Spanish star striker and talisman Diego Costa fell out of favor with manager Antonio Conte,
+        Chelsea opted to spend &#163;60 million to replace him with fellow countryman Alvaro Morata. In the hopes that
+        Morata would be a sure-fire replacement
+        for Costa's firepower and lethal finishing, having just scored 20 goals in 43 games for La Liga giants Real
+        Madrid in the
+        2016-17 season, Chelsea fans
+        were justifiably excited when he started off his Premier League career by scoring 9 goals in 14 games.
+        Unfortunately, a sudden drop in
+        finishing ability and an apparent loss of confidence saw Morata's form quickly decline, and he could only manage
+        2 goals in 23 games for
+        the rest of Chelsea's Premier League campaign. Morata was labelled a flop and offloaded to Atletico Madrid only
+        a year and a half after signing,
+        while Chelsea have shuffled through Michi Batshuayi, Tammy Abraham, and Olivier Giroud in the search for a new
+        star striker, neither of whom have fully convinced fans or pundits of their striking ability.
+
+        <p></p>
+
+        Very recently, Chelsea have signed striker Timo Werner, coming off a brilliant campaign with RB Leipzig,
+        scoring 28 goals in 34 games. While Werner is one of the most coveted strikers in Europe, his role in Leipzig's
+        system
+        as a lone striker in a 4-2-3-1 or on the left side of a 2-striker formation isn't immediately adaptable to
+        Chelsea's
+        usual 4-3-3, and it remains to be seen how Werner will fit into Chelsea's system.
+
+        <p></p>
+
+        Whether or not a new signing will become a success is difficult to tell, as stats and performance undeniably
+        depend on the team's system and the player's role in it.
+
+        The ability to accurately identify how much value a potential signing would provide to a team would be immensely
+        helpful for teams when scouting players, as well as for fans and analysts in understanding successful and failed
+        signings.
+
+        <!-- One chapter of the popular football analysis book "The
+        Numbers
+        Game" argues that Chelsea should
+        have signed Darren Bent instead of Fernando Torres in January 2011 due to the former's higher "marginal benefit
+        of goals scored". While the stats
+        may validate this claim, any Premier League fan in 2011 would know that Bent was a poacher who relied on good
+        positioning and runs in behind
+        the defence for goals, while Torres was a technical striker who would sometimes drop deep to take the ball past
+        defenders, and who in past seasons had been occasionally
+        deployed as a second striker. While their scoring records may have been comparable or have favored Bent, their
+        differing playing styles makes it
+        hard to say if either would have performed well in the role of the other. -->
+
+        <p></p>
+
+        In this piece I try to tackle this question: How can we quantify how a player will perform in a different role?
+        I'll be doing this using match event data from the top 5 leagues during the 2017-18 season: the Premier League,
+        La Liga, Serie A, Ligue 1, and the Bundesliga.
+
+        <p></p>
+
+        In order to answer
+        this question, first I'll break down the problem
+        into 3 parts that need to be defined quantitatively: Role, Ability, and Value.
+
+        <p></p>
+
+        <h4>Role, Ability, and Value</h4>
+        <div style="padding-left: 2%">
+
+          <h5>Role</h5>
+          <p></p>
+
+          In order to quantify how one player will perform in the role of another, first we need to quantify what that
+          role actually is.
+          Player roles can be both well-defined or loosely-defined in football - we can
+          say for sure that Trent Alexander-Arnold and Kyle Walker are both right-backs, but can we answer for
+          do we describe Walker as an "inverted full-back", as Manchester City are claimed to use,
+          and is TAA really that similar to a "traditional" right back when he plays in Liverpool's system, which pushes
+          their full-backs
+          way out wide when attacking.
+
+          <p></p>
+
+          How can we define these roles based on event data from games?
+
+          <p></p>
+
+          <div class="banner" style="text-align: center;">
+            <img src="images/taawalker_passduel.png" width="96%" />
+          </div>
+
+          <p></p>
+
+          What I propose is to simply define a player's role as the entire set of actions that they perform, across the
+          desired timeframe
+          (for example all matches in a season).
+          For example, the plots above show the pass and duel actions for Walker and TAA during the 2017-18 season.
+          This data, along with all other types of actions and their details (e.g. target locations, pass types, etc.)
+          define the role
+          that Walker and TAA play for their teams. By "replacing" them, we're roughly thinking of having someone else
+          perform all of these
+          actions in their place.
+
+          <p></p>
+
+          <hr>
+          <div class="banner" style="text-align: center;">
+            <img src="https://j.gifs.com/91wJ5Z.gif" height="190px" />
+            <img src="https://j.gifs.com/gZjRg3.gif" height="190px" />
+            <img src="https://j.gifs.com/nxq2pE.gif" height="190px" />
+          </div>
+          <p></p>
+          <hr>
+          <p></p>
+          <div class="banner" style="text-align: center;">
+            <img src="https://j.gifs.com/E8MY4v.gif" height="190px" />
+            <img src="https://j.gifs.com/oVr3Lj.gif" height="190px" />
+            <img src="https://j.gifs.com/zvJrZY.gif" height="190px" />
+          </div>
+          <p></p>
+          Examples of actions typically made by Kyle Walker and Trent Alexander-Arnold.
+          <hr>
+
+          <p></p>
+
+          This definition isn't very exciting or seemingly clearly defined at all, but it will make more sense once we
+          start
+          talking about Value and see how it fits in.
+
+          <p></p>
+
+          <h5>Ability</h5>
+          <p></p>
+
+          When we talk about replacing one player with another, we're talking about replacing their playing ability
+          with another player's ability. Replacing a League One striker with Messi, you're getting a player who's
+          more able at scoring, dribbling, and creating chances. 
+
+          <p></p>
+
+          So what do we mean by ability? I'll choose to define this as the probability that a player will complete
+          particular actions on a football pitch.
+          If we think of the success of footballing actions as being binomial variables, player ability corresponds to
+          the
+          probabilities
+          assigned to those actions. This is pretty straightforward - a really good player is able to
+          do lots of things - complete different types of passes,
+          score from shots, make tackles, etc. - with a high success rate.
+
+          <hr>
+          <div class="banner" style="text-align: center;">
+            <img src="https://j.gifs.com/xnEpYJ.gif" height="300px" />
+            <p></p>
+          </div>
+          <hr>
+          <p></p>
+
+          For example, we know that Mesut Ozil is an extremely good passer, specializing in defense-splitting passes in
+          the final third. By this definition of player ability,
+          Mesut Ozil is a good passer because he has a high probability of completing these types of passes.
+
+          <p></p>
+
+          To illustrate, here's a passing map for Ozil, counting passes starting from the central midfield area. Let's
+          compare him to someone who's an ok-ish passer,
+          like Chelsea defender Antonio Rudiger.
+
+          <p></p>
+
+          <div class="banner" style="text-align: center;">
+            <img src="images/ozil_pass_accuracy.png" width="48%" />
+            <img src="images/rudiger_pass_accuracy.png" width="48%" />
+          </div>
+
+          <p></p>
+
+          This probability map partially defines the player ability of both players. Although Ozil is clearly better at
+          playing passes into the final "fifth",
+          Rudiger still has a high completion rate for forward passes in midfield. Anyone who watches football probably
+          wouldn't argue Rudiger is a more talented passer -
+          rather the flaw is that the current data doesn't take into account the difficulty of these passes.
+          <!-- 
+          <p></p>
+
+          <hr>
+          <div class="banner" style="text-align: center;">
+            <img src="https://j.gifs.com/3Qnz7n.gif" height="300px" />
+            <img src="https://j.gifs.com/YWAz49.gif" height="300px" />
+          </div>
+          <hr> -->
+
+          <p></p>
+
+          We also know Mohamed Salah was one of the best finishers in the 2017/18 season, breaking the Premier League
+          record by scoring 32 goals in a season.
+          Here his player ability in terms of completing shots is examined compared to that of Alvaro Morata.
+
+          <p></p>
+
+          We see he has a significantly higher conversation rate in many areas of the pitch.
+
+          <p></p>
+
+          <div class="banner" style="text-align: center;">
+            <img src="images/salah_shot_accuracy.png" width="48%" />
+            <img src="images/morata_shot_accuracy.png" width="48%" />
+          </div>
+
+          <p></p>
+
+          Note that this definition doesn't result in a singular metric to look at (think FIFA ratings), which makes
+          it difficult to compare
+          the "ability" of players straightforwardly. That should be the case - different players are good
+          at different things,
+          and shouldn't be judged outside the context of a particular role.
+
+          <p></p>
+
+          <h5>Value</h5>
+          <p></p>
+
+          Now we need a method of quantifying how much value a player adds in a role. This requires using player ability
+          in
+          the context of player role - a player who's very good at long shots doesn't add much value if they aren't
+          taking very many.
+
+          <p></p>
+
+          For this I use the <b>xT/VAEP</b> framework of <a
+            href="https://dtai.cs.kuleuven.be/sports/blog/valuing-on-the-ball-actions-in-soccer-a-critical-comparison-of-xt-and-vaep">"valuing
+            on-the-ball actions"</a>. You can read more about both ideas in the linked post, in the original blog post
+          on
+          <a href="https://karun.in/blog/expected-threat.html">xT</a>, or in the original paper on
+          <a href="https://arxiv.org/pdf/1802.07127.pdf">VAEP</a>
+
+          This framework assigns a certain value \( V(S_i) \) to each game state \( S_i \), based on how valuable that
+          state is.
+          For \( xT \), which focuses on offense, \( V(S_i) \) models the probability that the team will soon score a
+          goal.
+          <b>VAEP</b> extends this to defense and models \( V_{score}(S_i) - V_{concede}(S_i) \), incorporating the
+          probability of conceding a goal.
+
+          <p></p>
+
+          For this piece I'll be using \( xT \), and I'll only be focusing on offensive value.
+
+          <div class="banner" style="text-align: center;">
+            <div id="xtlfc">
+            </div>
+            The \( xT \) visualization for Liverpool's 2017-18 season. 
+            Yellow grid cells represent pitch areas where possession has a high likelihood of leading to a goal.
+            <hr>
+          </div>
+
+          <!-- <div class="banner" style="text-align: center;">
+            <img src="images/liverpool_xt.png" width="480px" />
+          </div> -->
+
+          <p></p>
+
+          \( xT \) splits a football field into \( L \times W \) total cells, and assigns a value \( V(S_i) \) to each
+          cell,
+          representing the probability of a goal happening if the team has possession in that cell. \( xT \) is
+          different from
+          \( xG \) (expected goals) and \( xA \) (expected assists) - \( xT \) represents the probability of a goal
+          happening
+          in any future point of that possession. The above \( xT \) visualization for Liverpool's 2017-18 team
+          illustrates this,
+          as opposition byline areas have relatively high \( xT \) due to a high chance of a cross leading to a goal -
+          while in contrast those areas typically have low \( xG \) due to the low chance of scoring from a tight angle.
+
+          <p></p>
+
+          Now for the math (which will be required later on), all that xT requires is some conditional probability and
+          recursive relations.
+
+          <p></p>
+
+          The equation for \( xT \) is as follows:
+          $$
+          xT_{x,y} = (s_{x,y} \times g_{x,y}) + (m_{x,y} \times \sum_{z=1}^L \sum_{w=1}^W T_{(x,y) \rightarrow (z,w)}
+          xT_{z,w})
+          $$
+
+          where:<p></p>
+          <div style="margin-left: 4%;">
+            \( xT_{x,y} \) is the xT in cell (x,y)<br>
+            \( s_{x,y} \) is the probability of a shot<br>
+            \( m_{x,y} \) is the probability of a pass/move<br>
+            \( g_{x,y} \) is the probability of scoring from position (x,y) (i.e. xG)<br>
+            \( T_{(x,y) \rightarrow (z,w)} \) is the probability of completing a pass from cell (x,y) to cell (z,w),
+            and<br>
+            \( xT_{z,w} \) is the xT in cell (z,w).
+          </div>
+
+          <p></p>
+
+          Since this definition is recursive, \( xT \) is approximately solved with dynamic programming, by computing
+          the
+          probability
+          of scoring within the next \( K \) actions. Typically an \( xT \) model for will converge within 30-60
+          iterations
+          (\(
+          K \) ~ 30-60).
+
+          <p></p>
+
+          \( xT \) gives us a model for valuing game states (i.e. positions on a pitch), but we still need to quantify
+          the value \( U \) that a player adds to a team. Using the \( xT \) framework, value can be added in 2 ways: by
+          moving the ball (pass, cross, dribble)
+          and by taking a shot.
+
+          <p></p>
+          <ol>
+            <li>
+              <b>By moving the ball:</b> \( U = V(S_j) - V(S_i) \) <p></p>
+              By successfully moving the ball, a player changes the state of the game from \( S_i \) to \( S_j \),
+              thus adding value \( V(S_j) - V(S_i) \) to the team.
+            </li>
+            <br>
+            <li>
+              <b>By taking a shot:</b> \( U = xG(S_i) - V(S_i) \) <p></p>
+              While in possession of the ball in state \( S_i \), there is \( V(S_i) \) chance of the possession ending
+              in a goal.
+              By taking a shot, there is now \( xG(S_i) \) chance of the possession (which ends in a shot) ending in a
+              goal,
+              thus adding \( xG(S_i) - V(S_i) \) value.
+            </li>
+          </ol>
+
+          <p></p>
+
+          Two notes on this formulation are: <br>
+          <ol>
+            <li>
+              Value added by player actions can also be negative - players can make
+              poor passing decisions which
+              lower the chance of scoring, or they can take bad shots when better passing options were available
+            </li>
+            <li>
+              The \( xG \) model used for shot value can be team-specific or player-specific -
+              in this piece I opt to use very basic, location-based, player-specific \( xG \) models.
+            </li>
+          </ol>
+        </div>
+
+        <p></p>
+
+
+        <h5>Putting it all together</h5>
+        <p></p>
+
+        Now that we have our definitions of Role, Ability, and Value, we can put them together to simulate how
+        players will perform in certain roles.
+
+        <p></p>
+
+        Let's start this way: We have player \( P1 \), who plays for team \( T1 \), and player \( P2 \), who we're
+        considering
+        as a replacement for \( P1 \). Over the course of a season, or a match, \( P1 \) performs some actions for \( T1
+        \),
+        each action adding a certain value for the team, and each action being a success or failure.
+
+        <p></p>
+
+        For the sake of this example, let's say \( P1 \) is Mohamed Salah, \( T1 \) is Liverpool's 2017-18 team, and \(
+        P2 \) is Mesut Ozil.
+        Let's take a look at some of Salah's actions during Liverpool's 4-3 win over Man City in January 2018.
+
+        <p></p>
+
+        <hr>
+        <div class="banner" style="text-align: center;">
+          <img src="https://j.gifs.com/Mwl0NR.gif" height="200px" />
+          <img src="images/goal3_mancity.png" height="200px" />
+        </div>
+        <hr>
+        <div class="banner" style="text-align: center;">
+          <img src="https://j.gifs.com/XLz3po.gif" height="200px" />
+          <img src="images/goal4_mancity.png" height="200px" />
+        </div>
+        <hr>
+
+        <p></p>
+
+        If you haven't guessed by now, I'm a Liverpool fan.
+
+        <p></p>
+
+        In the first sequence leading up to Sadio Mane's goal, Salah produces a pass (action <b>#2</b>) to Mane,
+        from about 30 metres out on the right, to the left edge of the box. This pass succeeds,
+        and according to our \( xT \) model has value <b>0.0334</b>. In the second sequence, Salah attempts another pass
+        to Mane
+        (action <b>#1</b>), but the pass is intercepted by Ederson.
+        This would have had value <b>0.0102</b>, but was not a success.
+
+        <p></p>
+
+        Looking at just the 2 passes alone, we can say the indicator variable of success for the 1st pass was 1,
+        while the indicator variable of success for the 2nd pass was 0.
+
+        <p></p>
+
+        <div class="banner" style="text-align: center;">
+          <img src="images/goal3_mancity_pass.png" width="640px" />
+        </div>
+        <div class="banner" style="text-align: center;">
+          \( value = 0.0334 \) <br>
+          \( I[success] = 1 \)
+        </div>
+        <div class="banner" style="text-align: center;">
+          <img src="images/goal4_mancity_pass.png" width="640px" />
+        </div>
+        <div class="banner" style="text-align: center;">
+          \( value = 0.0102 \) <br>
+          \( I[success] = 0 \)
+        </div>
+
+        <p></p>
+
+        Now, what if we were to imagine replacing Mohamed Salah with Mesut Ozil? What would the result of those 2 passes
+        be,
+        and what type of value would Ozil add to the team? Using our notion of player ability,
+        let's go back and look at Ozil's probability of pass success for those types of passes.
+
+        <p></p>
+
+        Suppose we go through Ozil's passing data, and find that he completes the first pass with probability
+        <b>0.9</b>,
+        and completes the second pass with probability <b>0.7</b>. This tells us how likely he is to make those two
+        passes,
+        but how do we actually evaluate the value that Ozil adds?
+
+        <p></p>
+
+        What I propose is to think about the <b>expected value added (EVA)</b> by Ozil's actions. If we think of player
+        actions
+        as binomial random variables, the expected value of each action is the probability of success, multiplied by the
+        value of the action.
+        In this case the expected value added by letting Ozil play the first pass is \( 0.9 * 0.0334 = 0.0306 \),
+        and the expected value added by letting Ozil play the second pass is \( 0.7 * 0.0102 = 0.0071 \).
+
+        <p></p>
+
+        <div class="banner" style="text-align: center;">
+          <img src="images/salah_ozil_eva.png" width="88%" />
+        </div>
+
+        <p></p>
+
+        With this notion of expected value added, we can sum up the expected value added of all of Mohamed Salah's
+        actions across the 2017-18 season,
+        using Mesut Ozil's success probabilities for both moves and shots.
+        This gives us a single value which tells how much value we expect from
+        replacing Salah with Ozil in the 2017-18 Liverpool team, based on Ozil's ability to perform in the past.
+
+        <p></p>
+
+        One issue that arises is whether we compare we can compare the <i>expected value added</i> for Ozil with the
+        <i>value added</i> for Salah. I'd argue that it's fine - we're assigning \( 0 \) and \( 1 \) probabilities in
+        hindsight.
+        Furthermore, if we were to compute pass & move probability models for Salah based on the same data,
+        the resulting <i>expected value added</i> would still match the value the get from assigning binary
+        probabilities.
+
+        <p></p>
+
+        <div style="padding-left: 2%;">
+
+          <h5>Just a tiny bit more (recomputing the \( xT \) model)</h5>
+          <p></p>
+
+          But wait, there's something not right yet - if we're replacing Salah with Ozil, we can't compute value added
+          based on the old \( xT \) model. Suppose we change our scenario, and we're replacing some very average
+          League One striker who plays for a League One team, with Lionel Messi.
+          Since Messi likely has a higher pass and shot success probability, the \( xT \) model that includes Messi
+          should
+          automatically value its game states more.
+          Thinking about a single action, the value of a successful forward pass should now change, because there's now
+          a
+          higher probability of a goal since Messi could end up on the end of that pass.
+
+          <p></p>
+
+          Revisiting the original xT equation, what we have to modify is \( g_{x,y} \) and \( T_{(x,y) \rightarrow (z,w)
+          }
+          \), while keeping \( s_{x,y} \) and \( m_{x,y} \) the same.
+          What this means is we're keeping the actions made the same - we assume replacing a player has no influence on
+          playing
+          style - but modifying the probability that
+          the actions will be successful.
+
+          <p></p>
+
+          For \( g_{x,y} \) the modification is quite simple:
+
+          <p></p>
+
+          $$
+          g_{x,y}' = N^{P1} g_{x,y}^{P2} + \frac{N - N^{P1}}{N} g_{x,y}^{T1 - P1}
+          $$
+
+          <p></p>
+
+          where:
+
+          <p></p>
+
+          <div style="margin-left: 4%;">
+            \( N \) is the number of shots taken by team \( T1 \) from location \( x,y \) <br>
+            \( N^{P1} \) is the number of shots taken by player \( P1 \) from location \( x,y \) <br>
+            \( g_{x,y}^{P2} \) is the shot accuracy of player \( P2 \) from location \( x,y \) and <br>
+            \( g_{x,y}^{T1 - P1} \) is the shot accuracy of the players in team \( T1 \), excluding \( P1 \), from
+            location \( x,y \)
+          </div>
+
+          <p></p>
+
+          For \( T_{(x,y) \rightarrow (z,w)} \) this becomes a bit trickier:
+
+          <p></p>
+
+          $$
+          T_{(x,y) \rightarrow (z,w)}' = p_{(x,y) \rightarrow (z,w)} \times [ N^{P1} T_{(x,y) \rightarrow (z,w)}^{P2} +
+          \frac{N - N^{P1}}{N} T_{(x,y) \rightarrow (z,w)}^{T1-P1} ]
+          $$
+
+          <p></p>
+
+          where:
+
+          <p></p>
+
+          <div style="margin-left: 4%;">
+            \( N \) is the number of passes attempted by team \( T1 \) from location \( x,y \) to location \( z,w \)<br>
+            \( N^{P1} \) is the number of passes attempted by player \( P1 \) from location \( x,y \) to location \( z,w
+            \)<br>
+            \( p_{(x,y) \rightarrow (z,w)} \) is the probability of team \( T1 \) choosing to pass to location \( z,w \)
+            given that they choose to pass from location \( x,y \)<br>
+            \( T_{(x,y) \rightarrow (z,w)}^{P2} \) is the probability that player \( P2 \) completes a pass from
+            location
+            \( x,y \) to location \( z,w \)<br>
+            \( T_{(x,y) \rightarrow (z,w)}^{T1-P1} \) is the probability that team \( T1 \), excluding player \( P1 \),
+            completes a pass from location \( x,y \) to location \( z,w \)<br>
+          </div>
+
+          <p></p>
+
+          Essentially we're measuring the pass & shot accuracy, if we had \( P2 \) take all the passes and shots that \(
+          P1 \) did for team \( T1 \).
+
+          <p></p>
+
+          <h5>The sparsity issue (can skip this section)</h5>
+          <p></p>
+
+          There's still a couple of issues with this method, and you might have noticed some of them already.
+          One that I'll address is an issue of sparsity for event locations. Since the move & shot probability
+          models are based on limited data, move & shot probability cells will be non-zero only if the player
+          has completed an action in that cell. Many values of \( g_{x,y}^{P2} \) and \( T_{(x,y) \rightarrow
+          (z,w)}^{P2} \) will be \( 0 \).
+
+          <p></p>
+
+          Another issue is unrealistic probability values due to small sample data. For example,
+          Mohamed Salah's long range goal against Man City was the only shot Salah took from that area all season.
+          That gives him a shot probability of \( 1.0 \) from that cell, which is extremely unrealistic.
+          The same principle applies for passes - this skews the ability of players when we're simulating them.
+
+          <p></p>
+
+          In short, there's 2 main problems:
+
+          <p></p>
+
+          <ol>
+            <li>
+              Some cells may have low or zero probability when they're actually good goal-scoring/passing locations.
+            </li>
+            <li>
+              Some cells may have high probability when they're bad goal-scoring/passing locations, due to small
+              samples.
+            </li>
+          </ol>
+
+          <p></p>
+
+          To address this I'll use 2 methods: Gaussian kernel density estimation for resampling, and additive smoothing
+          for including prior probabilities.
+
+          <p></p>
+
+          <div class="banner">
+            <img src="images/smooth_gmpm.png" width="100%">
+          </div>
+
+          <p></p>
+
+          The steps are as follows, first for shots.
+
+          <p></p>
+
+          <ol>
+            <li>
+              Separate all shot events into goals & missed shots (successful/unsuccessful moves for move events),
+              creating
+              an array of 2D coordinates for each
+              (shapes of \( N_g \times 2 \) and \( N_m \times 2 \)).
+            </li>
+            <br>
+            <li>
+              For both goals & missed shots, perform Kernel Density Estimation with a Gaussian kernel. For this a kernel
+              bandwidth of \( 2.5 \) is used.
+            </li>
+            <br>
+            <li>
+              Resample \( N_g \) goal locations and \( N_m \) missed shot locations from the estimated densities, repeat
+              this for \( 1000 \) iterations and compute the average. This "expands" the set of event locations, and
+              increases the probability for cells with neighboring
+              high-probability cells.
+            </li>
+            <br>
+            <li>
+              Use a prior \( xG \) grid, \( \eta \) to smooth both matrices. For this work, this grid is constructed
+              from
+              all available shot events from the 2017-18 season.
+              The number of shots & goals are counted per grid cell, and any cell with \( < 5 \) goals is set to \( 0 \)
+                to avoid outliers, before dividing by the number of shots. <p>
+                </p>
+                The resulting grid \( \eta \) is then used in the following manner:
+                <p></p>
+                <div class="banner" style="text-align: center;">
+                  \( G_{x,y}' = G_{x,y} + \alpha \eta_{x,y} \)
+                  <br>
+                  \( M_{x,y}' = M_{x,y} + \alpha (1 - \eta_{x,y}) \)
+                </div>
+                <p></p>
+                Where \( G_{x,y} \) and \( M_{x,y} \) are the goal & missed shot counts, and \( \alpha \) is a parameter
+                controlling the amount of smoothing -
+                for this piece I use \( alpha = 0.6 \).
+            </li>
+            <br>
+            <li>
+              Finally, return the resulting matrix \( g \), where:
+              $$
+              g_{x,y} = \frac{G_{x,y}}{G_{x,y} + M_{x,y}}
+              $$
+            </li>
+          </ol>
+
+          <p></p>
+
+          The entire process, displayed with Mohamed Salah's shot events, along with the \( eta \) grid, is shown in the
+          figures above.
+
+          <p></p>
+
+          One question is how much this smoothing process skews the computed values from the original values.
+          Below I plot the values computed with vs. without smoothing, for all players in the top 5 leagues
+          who scored at least 10 goals during the 2017-18 season, along side the smoothing shot matrix \( \eta \).
+
+          <p></p>
+
+          <div class="banner" style="text-align: center;">
+            <img src="images/sns.png" width="32%">
+            <img src="images/goal_eta.png" width="32%">
+          </div>
+
+          <p></p>
+
+        </div>
+
+        <h5>Seeing it in action</h5>
+        <p></p>
+
+        <b>FINALLY.</b> Now that we know how to do this, let's see the actual results. Let's try finding a replacement
+        for 2017-18 Mohamed Salah.
+
+        <p></p>
+
+        To do this, we'll take all the players in Europe's top 5 leagues who scored at least 10 league goals in 2017/18,
+        and simulate them in place of Salah.
+        Let's take a look at the top 10 players, sorted by expected value added.
+
+        <p></p>
+
+        <div id="top10">
+        </div>
+
+        <p></p>
+
+        From the results, we see the top 10 players are all attackers, and are in fact able to provide more added value
+        with their actions than Salah!
+        Looking at their "threat maps" - the locations where they create the most value for their own teams, we see that
+        most of the players have similar
+        playing styles to Salah - mainly players who operate from the right wing.
+
+        <p></p>
+
+        To examine the results further, let's take a look at our first place result, Paulo Dybala of Juventus.
+
+        <p></p>
+
+        <div class="row" width="100%" style="position: relative;">
+          <div class="column" style="float: left; position: relative; width:50%; text-align: center;">
+            <div style="font-size: 14px; width: 100%;">
+              <b>Pass accuracy per position</b><br>
+              <img src="images/salah_passM.png"><br>
+              <b>Shot accuracy per position</b><br>
+              <img src="images/salah_shotM.png">
+              <p></p>
+            </div>
+            <div style="font-size: 18px; position: relative; width: 100%; height: 120px;">
+              <div style="text-align: center; position: absolute; left: 24%; vertical-align: middle;">
+                <img src="images/salah.png" width="100px">
+              </div>
+              <div style="text-align: center; position: absolute; left: 44%; vertical-align: middle;">
+                <div width="50%">
+                  <b>Mohamed Salah (Liverpool)</b><br>
+                  Move value: <b>5.968</b><br>
+                  Shot value: <b>13.656</b><br>
+                  Total value: <b>19.624</b>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column" style="margin-right: 0; width:50%; text-align: center;">
+            <div style="font-size: 14px; width: 100%;">
+              <b>Pass accuracy per position</b><br>
+              <img src="images/dybala_passM.png"><br>
+              <b>Shot accuracy per position</b><br>
+              <img src="images/dybala_shotM.png">
+              <p></p>
+            </div>
+            <div style="font-size: 18px; position: relative; width: 100%; height: 120px;">
+              <div style="text-align: center; position: absolute; left: 24%; vertical-align: middle;">
+                <img src="images/dybala.jpg" width="100px">
+              </div>
+              <div style="text-align: center; position: absolute; left: 44%; vertical-align: middle;">
+                <div width="50%">
+                  <b>Paulo Dybala (Juventus)</b><br>
+                  Move value: <b>5.710</b><br>
+                  Shot value: <b>21.545</b><br>
+                  Total value: <b>27.255</b>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p></p>
+
+        The plots above show the move & shot accuracies for Salah & Dybala, for each position.
+        We can notice some regions on the pitch where Dybala is better at passing, and Salah is better at shooting.
+
+        <p></p>
+
+        To give us an idea of where Dybala might provide more value, we can look at the shots and passes where
+        Dybala provides more value added, and where Salah provides more value added.
+
+        <br>
+
+        <div class="banner" style="text-align: center;">
+          <img src="images/salah_dybala_moves.png" width="44%" />
+          <img src="images/dybala_salah_moves.png" width="44%" />
+        </div>
+
+        <br>
+
+        From visualizing the top 12 moves for each player, we see that Dybala provides more value when moving the ball
+        into
+        the box from the right, or when penetrating from the center/left. On the other hand, Salah adds more value with
+        passes
+        across the penalty area, either when crossing or moving the ball to Firmino/Mane.
+
+        <br>
+
+        <div class="banner" style="text-align: center;">
+          <img src="images/salah_dybala_shots.png" width="44%" />
+          <img src="images/dybala_salah_shots.png" width="44%" />
+        </div>
+
+        <br>
+
+        With shots this becomes a bit more difficult to interpret. The concept of value added per shot is a bit strange
+        -
+        shots with a high \( xG \) may actually subtract value in areas with high \( xT \). However, the comparative
+        plots
+        are still intuitive, as following their shooting accuracy plots,
+        Salah adds more value than Dybala when shooting from the center, left, or the right edge of
+        the 6-yard box, while Dybala adds more value when shooting from the right edge of the box.
+
+        <p></p>
+
+        You can try seeing the results for different players by yourself. Here's the evaluation for the top 100 value
+        creators
+        in Europe's top 5 leagues during the 2017-18 season.
+
+        <p></p>
+
+        <div style="padding-left: 1%;">
+          <b>Team </b>
+          <select id="TeamSel" onchange="changeTop5Team()">
+          </select>
+
+          <span style="padding-left: 1%;">
+            <b>Player </b>
+            <select id="PlayerSel" onchange="changeTop5Player()">
+            </select>
+          </span>
+        </div>
+
+        <div id="top5">
+        </div>
+
+        <p></p>
+
+        <h5>Limitations & future work</h5>
+        <p></p>
+
+        Obviously there are several limitations to this work, and several ways in which it can be improved on. Some of
+        these limitations are in terms of the
+        technical methods used and scope of the work, and some are due to the limited nature of the available data.
+
+        <p></p>
+
+        Some areas for improvement which would be interesting are:
+
+        <p></p>
+
+        <ol>
+          <li>
+            <b>Extension to defensive value/VAEP framework:</b> The current framework only uses the \( xT \) model of
+            value creation, which only considers
+            offensive value added by players. An initial extension to include defensive contribution while still using
+            the \( xT \) model would be relatively
+            straightforward and interesting.
+            <p></p>
+            Another limitation of the \( xT \) framework is that the value per action is only a function of location,
+            and an extension of this to the VAEP framework
+            which relies more on predictive modeling would be very useful. However, one issue where the solution isn't
+            immediately obvious is how an VAEP model should be
+            updated following the inclusion of a player (in the same manner as the xT modification section above). With
+            \( xT \) the value model is constructed from the
+            success probability matrices so updating the probabilities is sufficient, but I'm not sure how this would be
+            done with a predictive model.
+          </li>
+          <br>
+          <li>
+            <b>Evaluation for team-level changes in expected value added:</b> The current method only evaluates the
+            change in value added for the player replaced.
+            However, modifying one player in the \( xT \) framework leads to different action values for all players in
+            the team - a pass to Messi leads to more threat than
+            a pass to a League One striker - and so inclusion of team-level value would be interesting.
+            <p></p>
+            We might end up seeing some players that add small marginal value in their own roles when simulated, but add
+            a large amount of value to the overall team.
+          </li>
+          <br>
+          <li>
+            <b>Better models/data for action success probabilities:</b> The current shot probability & move probability
+            values are calculated based only on the locations,
+            without taking into account the difficulty of the pass. A simple ground pass with no defenders in the way,
+            and a lofted through ball past 3 players are valued
+            the same in the current setup. Better player-level models that account for variables like defender
+            positioning, defensive pressure, type of pass
+            (air, ground, footedness, etc.) would be interesting if we could incorporate a VAEP-like framework.
+            <p></p>
+            Furthermore, event sparsity is still an issue even with smoothing. You might have noticed that Illaramendi scores extremely high in the 
+            <b>EVA</b> replacement rankings - this is due to him scoring 3 goals from 3 shots in one particular penalty area grid cell.
+          </li>
+          <br>
+          <li>
+            <b>Better understanding of failed actions:</b> Locations for events like failed passes and dribbles are
+            still listed in the data as the actions occurred,
+            not as they were intended. For example, a through ball intended into the penalty box that was intercepted at
+            the edge of the box,
+            is still listed as a pass to the edge of the box. Better ways for dealing with these actions would lead to a
+            more accurate evaluation of the expected value added by them.
+          </li>
+        </ol>
+
+
+
+
+
+
+
+        <!-- Sidebar Widgets Column -->
+        <div class="col-md-3">
+          <div class="card my-3">
+            <div class="sidebar-module sidebar-module-inset">
+              <figure class="figure">
+                <img src="../../images/image.jpg" class="figure-img rounded" style="width: 100%; height: auto;">
+              </figure>
+              <div class="card-body">
+                <h5>Pian Pawakapan</h5>
+                <p>เพียร ภวัครพันธุ์</p>
+                <p>
+                  <!-- <a href="https://www.twitter.com/pianpwk" style="text-decoration:none;">
+                        <i class="fab fa-twitter fa-lg"></i>
+                      </a> -->
+                  <a href="https://www.github.com/pianpwk" style="text-decoration:none;">
+                    <i class="fab fa-github fa-lg"></i>
+                  </a>
+                  <a href="https://www.kaggle.com/pawakapan" style="text-decoration:none;">
+                    <i class="fab fa-kaggle fa-lg"></i>
+                  </a>
+                  <a href="https://www.linkedin.com/in/pianpwk" style="text-decoration:none;">
+                    <i class="fab fa-linkedin-in fa-lg"></i>
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <script>
+
+      d3.json('salah_10rep.json', function (err, data) {
+
+        var d0 = data[0];
+        d3.select("#top10").append("button")
+          .attr("class", "btn btn-outline-secondary")
+          .html(
+            "<b>Player</b> | " + d0.name + " (" + d0.team + ")" +
+            '<span style="float:right; font-size:18px;"> Value Added: <b>' + d0.total.toFixed(3) + ' </b></span>'
+          )
+        d3.select("#top10").append("div")
+          .attr("class", "top10-con-main")
+          .html('<div class="row"><div class="column" style="padding-left: 19%; padding-top: 18px; text-align: left; width: 56%;">' +
+            'Team: <b>' + d0.team + '</b><p></p>' +
+            'Move value: <b>' + d0.move.toFixed(3) + '</b><p></p>' +
+            'Shot value: <b>' + d0.shot.toFixed(3) + '</b><p></p>' +
+            'Total value: <b>' + d0.total.toFixed(3) + '</b><p></p>' +
+            '</div>' +
+            '<div class="column" style="float:right; padding-right: 6%; padding-top: 10px; padding-bottom: 10px;"> <b>Threatmap</b><br> <img src="threatmap/' + d0.id + '.png" width=300px /></div>' +
+            '</div>'
+          )
+
+        for (i = 1; i < data.length; i++) {
+          var d = data[i]
+          d3.select("#top10").append("button")
+            .attr("class", "btn btn-light")
+            .html("<b>" + i + "</b>" + " | " + d.name + " (" + d.team + ")" +
+              '<span style="float:right; font-size:18px;"> EVA: <b>' + d.total.toFixed(3) + ' </b></span>'
+            )
+          d3.select("#top10").append("div")
+            .attr("class", "top10-con-main")
+            .html('<div class="row"><div class="column" style="padding-left: 19%; padding-top: 18px; text-align: left; width: 56%;">' +
+              'Team: <b>' + d.team + '</b><p></p>' +
+              'Move EVA: <b>' + d.move.toFixed(3) + '</b><p></p>' +
+              'Shot EVA: <b>' + d.shot.toFixed(3) + '</b><p></p>' +
+              'Total EVA: <b>' + d.total.toFixed(3) + '</b><p></p>' +
+              '</div>' +
+              '<div class="column" style="float:right; padding-right: 6%; padding-top: 10px; padding-bottom: 10px;"> <b>Threatmap</b><br> <img src="threatmap/' + d.id + '.png" width=300px /></div>' +
+              '</div>'
+            )
+        }
+
+        var coll = document.getElementById("top10").getElementsByClassName("btn")
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+              content.style.maxHeight = null;
+            } else {
+              content.style.maxHeight = content.scrollHeight + "px";
+            }
+          })
+        }
+
+      })
+    </script>
+
+    <script>
+      // set the dimensions and margins of the graph
+      var margin = { top: 0, right: 30, bottom: 30, left: 0 }
+      var cellSize = 28;
+      var nl = 16;
+      var nw = 12;
+      var width = cellSize * nl
+      var height = cellSize * nw
+
+      // append the svg object to the body of the page
+      var svg = d3.select("#xtlfc")
+        .append("svg")
+        .attr("width", width * 1.2)
+        .attr("height", height * 1.0)
+        .append("g")
+        .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+      // Build color scale
+      var myColor = d3.scaleLinear()
+        .range(["#440154", "#fde725"])
+        .domain([0, 0.3])
+
+      //Read the data
+      d3.json("xT_liverpool.json", function (err, data) {
+
+        svg.append("g").append("svg:image")
+          .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")"
+          )
+          .attr("xlink:href", "images/whitefield.png")
+          .attr("width", width * 1.2)
+          .style("opacity", 1.0)
+        // .style("position", "absolute")
+        // .style("left", 100)
+
+        var gs = svg.selectAll()
+          .data(data).enter()
+          .append("g")
+
+        gs.append("rect")
+          .attr("x", function (d) { return cellSize * 0.975 * d.x + 50 })
+          .attr("y", function (d) { return cellSize * 0.81 * d.y + 42 })
+          .attr("width", cellSize * 0.975)
+          .attr("height", cellSize * 0.81)
+          .style("opacity", 0.6)
+          .style("fill", function (d) { return myColor(d.value) })
+
+        gs.append("text")
+          .text(d => d.value.toFixed(3))
+          .style("fill", function (d) {
+            if (d.value > 0.2) { return "purple" }
+            else { return "yellow" }
+          })
+          .style("font-size", 11)
+          .style("text-anchor", "middle")
+          .style("alignment-baseline", "middle")
+          .attr("x", d => cellSize * 0.975 * (d.x + 0.5) + 50)
+          .attr("y", d => cellSize * 0.81 * (d.y + 0.5) + 42)
+          .style("visibility", "hidden")
+          .style("font-weight", "bold")
+          .style("opacity", 0.6)
+
+        gs.append("rect")
+          .attr("x", function (d) { return cellSize * 0.975 * d.x + 50 })
+          .attr("y", function (d) { return cellSize * 0.81 * d.y + 42 })
+          .attr("width", cellSize * 0.975)
+          .attr("height", cellSize * 0.81)
+          .style("fill", function (d) { return myColor(d.value) })
+          .style("opacity", 0.6)
+          .on("mouseover", function (d) {
+            this.style.opacity = 0.0
+            // console.log(this.lastElementSibling)
+            this.previousElementSibling.style.visibility = "visible"
+          })
+          .on("mouseleave", function (d) {
+            this.style.opacity = 0.6
+            this.previousElementSibling.style.visibility = "hidden"
+          })
+
+      })
+    </script>
+
+    <script>
+
+      var top5data = null;
+      var team2playerids = {};
+      var id2playername = {};
+      var name2playerid = {};
+
+      d3.json('compare_top100.json', function (err, data) {
+
+        top5data = data;
+
+        Object.keys(data).forEach(function (pid) {
+          team = data[pid]['player']['team']
+          if (!(team in team2playerids)) {
+            team2playerids[team] = [];
+          }
+          team2playerids[team].push(pid)
+          id2playername[pid] = data[pid]['player']['name']
+          name2playerid[data[pid]['player']['name']] = pid
+        })
+
+        var teamSel = document.getElementById("TeamSel")
+        var teamnames = Object.keys(team2playerids)
+        teamnames.sort();
+        teamnames.forEach(function (t) {
+          var x = document.createElement('option')
+          x.text = t
+          teamSel.add(x, null)
+        })
+        changeTop5Team()
+
+        var coll = document.getElementById("top5").getElementsByClassName("btn")
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+              content.style.maxHeight = null;
+            } else {
+              content.style.maxHeight = content.scrollHeight + "px";
+            }
+          })
+        }
+
+        changeTop5Player()
+
+
+
+      })
+
+      function changeTop5Team() {
+        var TeamSel = document.getElementById("TeamSel")
+        var team = TeamSel[TeamSel.selectedIndex].text
+
+        var PlayerSel = document.getElementById("PlayerSel")
+        while (PlayerSel.options.length > 0) {
+          PlayerSel.remove(PlayerSel.options.length - 1);
+        }
+        for (var pid of team2playerids[team]) {
+          var x = document.createElement('option')
+          x.text = id2playername[pid]
+          PlayerSel.add(x, null)
+        }
+        changeTop5Player()
+
+      }
+
+      function changeTop5Player() {
+        var oldtop5 = document.getElementById("top5")
+        oldtop5.innerHTML = '<br>'
+
+        var PlayerSel = document.getElementById("PlayerSel")
+        var pname = PlayerSel[PlayerSel.selectedIndex].text
+        var pid = name2playerid[pname]
+
+        var d0 = top5data[pid]['player']
+        d3.select("#top5").append("button")
+          .attr("class", "btn btn-outline-secondary")
+          .html(
+            "<b>Player</b> | " + d0.name + " (" + d0.team + ")" +
+            '<span style="float:right; font-size:18px;"> Value Added: <b>' + d0.total.toFixed(3) + ' </b></span>'
+          )
+        d3.select("#top5").append("div")
+          .attr("class", "top5-con-main")
+          .html('<div class="row"><div class="column" style="padding-left: 19%; padding-top: 18px; text-align: left; width: 56%;">' +
+            'Team: <b>' + d0.team + '</b><p></p>' +
+            'Move value: <b>' + d0.move.toFixed(3) + '</b><p></p>' +
+            'Shot value: <b>' + d0.shot.toFixed(3) + '</b><p></p>' +
+            'Total value: <b>' + d0.total.toFixed(3) + '</b><p></p>' +
+            '</div>' +
+            '<div class="column" style="float:right; padding-right: 6%; padding-top: 10px; padding-bottom: 10px;"> <b>Threatmap</b><br> <img src="threatmap/' + d0.id + '.png" width=300px /></div>' +
+            '</div>'
+          )
+
+        for (i = 0; i < top5data[pid]['total'].length; i++) {
+          var d = top5data[pid]['total'][i]
+          d3.select("#top5").append("button")
+            .attr("class", "btn btn-light")
+            .html("<b>" + i + "</b>" + " | " + d.name + " (" + d.team + ")" +
+              '<span style="float:right; font-size:18px;"> EVA: <b>' + d.total.toFixed(3) + ' </b></span>'
+            )
+          d3.select("#top5").append("div")
+            .attr("class", "top5-con-main")
+            .html('<div class="row"><div class="column" style="padding-left: 19%; padding-top: 18px; text-align: left; width: 56%;">' +
+              'Team: <b>' + d.team + '</b><p></p>' +
+              'Move EVA: <b>' + d.move.toFixed(3) + '</b><p></p>' +
+              'Shot EVA: <b>' + d.shot.toFixed(3) + '</b><p></p>' +
+              'Total EVA: <b>' + d.total.toFixed(3) + '</b><p></p>' +
+              '</div>' +
+              '<div class="column" style="float:right; padding-right: 6%; padding-top: 10px; padding-bottom: 10px;"> <b>Threatmap</b><br> <img src="threatmap/' + d.id + '.png" width=300px /></div>' +
+              '</div>'
+            )
+        }
+
+        var coll = document.getElementById("top5").getElementsByClassName("btn")
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+              content.style.maxHeight = null;
+            } else {
+              content.style.maxHeight = content.scrollHeight + "px";
+            }
+          })
+        }
+
+      }
+
+    </script>
+
+
+    <style>
+      #top10,
+      #top5 {
+        text-align: center;
+      }
+
+      .btn-outline-secondary {
+        position: relative;
+        border-radius: 0;
+        /* background-color: #ddd; */
+        width: 66%;
+        height: 48px;
+        border: 1px #333;
+        color: #333;
+        text-align: left;
+        padding: 6px;
+        font-size: 16px;
+      }
+
+      .btn-light {
+        position: relative;
+        border-radius: 0;
+        /* background-color: white; */
+        /* color: #333; */
+        width: 66%;
+        height: 48px;
+        color: #333;
+        border: 1px #333;
+        text-align: left;
+        padding: 6px;
+        font-size: 16px;
+      }
+
+      .top10-con-main {
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+      }
+
+      .top10-con-rep {
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+      }
+
+      .top5-con-main {
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+      }
+
+      .top5-con-rep {
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+      }
+    </style>
+
+</body>
+
+</html>
