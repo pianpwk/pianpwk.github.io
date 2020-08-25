@@ -1316,7 +1316,7 @@ function computeScenePositions(alignScenes) {
 			max_y = Math.max(max_y, app.y)
 		})
 	})
-	baseline = max_y + 100;
+	baseline = max_y + 40;
 }
 
 // Introduction nodes
