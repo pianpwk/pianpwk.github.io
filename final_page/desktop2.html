@@ -1766,13 +1766,15 @@
             scene_ids = Array.from(scene_ids).sort()
 
             $(window).scroll(function () {
-                if ($(window).scrollTop() >= document.getElementById("narrative-2").getBoundingClientRect().top - parseInt(450 / height * 800)) {
+                var bcr = document.getElementById("narrative-2").getBoundingClientRect()
+                if (bcr.y < parseInt(450 * height / 800)) {
                     startAnimation()
                 }
             })
             // OR on load
             function checkLoad() {
-                if ($(window).scrollTop() >= document.getElementById("narrative-2").getBoundingClientRect().top - parseInt(450 / height * 800)) {
+                var bcr = document.getElementById("narrative-2").getBoundingClientRect()
+                if (bcr.y < parseInt(450 * height / 800)) {
                     startAnimation()
                 }
             }
@@ -1865,7 +1867,7 @@
 
             var handle_r;
             if (is_mobile) {
-                handle_r = 10;
+                handle_r = 12;
             } else {
                 handle_r = 16;
             }
@@ -2015,7 +2017,9 @@
                         }
                     })
                     current_val = 53 + h;
-                    addMouseover(current_val)
+                    if (!(is_mobile)) {
+                        addMouseover(current_val)
+                    }
                 }
             }
 
@@ -3402,7 +3406,7 @@
         .tr-track {
             stroke: #000;
             stroke-opacity: 0.3;
-            stroke-width: 5px;
+            stroke-width: 6px;
         }
 
         .tr-track-inset {
