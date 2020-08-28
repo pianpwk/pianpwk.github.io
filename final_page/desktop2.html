@@ -947,6 +947,7 @@
 
                 header_g.append("svg:image")
                     .attr("xlink:href", "icons/" + si + ".png")
+                    .attr("href", "icons/" + si + ".png")
                     .attr("height", "21px")
                     .attr("x", (scene_x0 + scene_x1) / 2 - 24)
                     .attr("y", header_y + 37 / 2 - 10.5)
@@ -1631,12 +1632,14 @@
             }
             if (!(is_mobile)) {
                 svg.append("image")
+                    .attr("href", "core_green.png")
                     .attr("xlink:href", "core_green.png")
                     .style("position", "absolute")
                     .attr("width", parseInt(54 / 98 * cw) + "px")
                     .attr("x", cgx)
                     .attr("y", cgy)
                 svg.append("image")
+                    .attr("href", "core_red.png")
                     .attr("xlink:href", "core_red.png")
                     .style("position", "absolute")
                     .attr("width", cw + "px")
@@ -1644,6 +1647,7 @@
                     .attr("y", cry)
                 svg.append("image")
                     .attr("xlink:href", "core_blue.png")
+                    .attr("href", "core_blue.png")
                     .style("position", "absolute")
                     .attr("width", cw + "px")
                     .attr("x", leftOffset + (323 / 645 * TriWidth) - (cw / 2))
@@ -1657,6 +1661,7 @@
             }
             var triangle_img = svg.append("image")
                 .attr("xlink:href", triangle_fn)
+                .attr("href", triangle_fn)
                 .attr("id", "tr-overlay-triangle")
                 .style("position", "absolute")
                 .attr("width", TriWidth)
@@ -2060,6 +2065,7 @@
                                 .attr("r", avatar_radius + 2)
                                 .attr("fill", "white")
                             svg.append("image")
+                                .attr("href", "page/src/assets/images/politician-photos-crop/" + response[0].name2file[name.split(' ').join('-')])
                                 .attr("xlink:href", "page/src/assets/images/politician-photos-crop/" + response[0].name2file[name.split(' ').join('-')])
                                 .attr("id", "tr-image-avatar" + name.split(" ").join("-"))
                                 .style("position", "absolute")
