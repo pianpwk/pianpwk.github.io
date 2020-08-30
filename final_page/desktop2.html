@@ -396,11 +396,11 @@
                 <ul>
                     <li>คริส เบเคอร์ และ ผาสุก พงษ์ไพจิตร, ประวัติศาสตร์ไทยร่วมสมัย</li>
                     <li><a
-                            href="https://www.prachachat.net/politics/news-345654">https://www.prachachat.net/politics/news-345654</a>
+                            href="https://www.prachachat.net/politics/news-345654" target="_blank">https://www.prachachat.net/politics/news-345654</a>
                     </li>
-                    <li><a href="https://ilaw.or.th/node/5229">https://ilaw.or.th/node/5229</a></li>
+                    <li><a href="https://ilaw.or.th/node/5229" target="_blank">https://ilaw.or.th/node/5229</a></li>
                     <li><a
-                            href="https://th.wikipedia.org/wiki/สุวิทย์_คุณกิตติ">https://th.wikipedia.org/wiki/สุวิทย์_คุณกิตติ</a>
+                            href="https://th.wikipedia.org/wiki/สุวิทย์_คุณกิตติ" target="_blank">https://th.wikipedia.org/wiki/สุวิทย์_คุณกิตติ</a>
                     </li>
                 </ul>
             </div>
@@ -442,7 +442,7 @@
                 d3.select("#part-1-img1").attr("src", "page/src/assets/images/part-1-img1-mobile.png")
                 d3.select("#part-1-img2").attr("src", "page/src/assets/images/part-1-img2-mobile.png")
                 d3.select("#part-1-img3").attr("src", "page/src/assets/images/part-1-img3-mobile.png")
-                d3.select("#part-2-img1").attr("src", "page/src/assets/images/part-2-img1.png")
+                d3.select("#part-2-img1").attr("src", "page/src/assets/images/part-2-img1-mobile.png")
                 d3.select("#part-2-img2").attr("src", "page/src/assets/images/part-2-img2-mobile.png")
                 d3.select("#part-2-img3").attr("src", "page/src/assets/images/part-2-img3-mobile.png")
                 d3.select("#part-2-img4").attr("src", "page/src/assets/images/part-2-img4-mobile.png")
@@ -493,7 +493,7 @@
             // Some defaults
             sceneWidth = 76;
             headerShift = 94;
-            width = scenes.length * sceneWidth + 2000;
+            width = scenes.length * sceneWidth + 2100;
             height = 470;
             labelSize = [sceneWidth, 13.6];
             var topPadding = 10;
@@ -893,7 +893,9 @@
                 .attr('id', 'liheader')
                 .attr('width', width + 180)
                 .attr('height', headerShift)
-                .style("transform", "translate(0, 0px)")
+            if (is_mobile) {
+                header.attr("transform", "translate(-100, 0)")
+            }
 
             // header index
             header.selectAll('text')
@@ -946,8 +948,8 @@
                     return parseInt(response.scenenames[i].split(".")[0]) == si
                 })[0]]
                 // calculate extent
-                var scene_x0 = subscenes[0].x + labelSize[1] - 0;
-                var scene_x1 = subscenes.slice(-1)[0].x + labelSize[1] + 72;
+                var scene_x0 = subscenes[0].x + labelSize[1] - 16;
+                var scene_x1 = subscenes.slice(-1)[0].x + labelSize[1] + 56;
                 var header_g = header.append("g")
                 var header_y = 4;
 
@@ -965,9 +967,9 @@
 
                 header_g.append("svg:image")
                     .attr("xlink:href", "icons/" + si + ".png")
-                    // .attr("href", "icons/" + si + ".png")
                     .attr("height", "21px")
-                    .attr("x", (scene_x0 + scene_x1) / 2 - 24)
+                    .attr("width", "18px")
+                    .attr("x", (scene_x0 + scene_x1) / 2 - Math.max(30, parseInt(window.screen.availWidth / 1280 * 30)))
                     .attr("y", header_y + 37 / 2 - 10.5)
 
                 header_g.append("text")
@@ -975,7 +977,7 @@
                     .style("font-family", "TheMATTER")
                     .style("font-weight", "bold")
                     .style("font-size", 16)
-                    .attr("x", (scene_x0 + scene_x1) / 2 + 20)
+                    .attr("x", (scene_x0 + scene_x1) / 2 + Math.max(16, parseInt(window.screen.availWidth / 1280 * 16)))
                     .attr("y", header_y + 37 / 2 + 2)
                     .style("text-anchor", "middle")
                     .style("dominant-baseline", "middle")
@@ -1257,6 +1259,7 @@
                 if (response.twfu.includes(name.split('_').join(' '))) {
                     d3.select("#li-charcard-b1").attr("href", "https://theyworkforus.elect.in.th/people/" + name.split('_').join('-'))
                     d3.select("#li-charcard-b1").style("visibility", "visible")
+                    d3.select("#li-charcard-b1").attr("target", "_blank")
                 }
                 d3.select("#li-charcard-t2").text(response.person_profile[name.split("_").join(" ")])
                 d3.select("#li-charcard-img").attr("src", "page/src/assets/images/politician-photos-crop/" + response.name2file[name.split("_").join("-")])
@@ -1650,23 +1653,23 @@
             }
             if (!(is_mobile)) {
                 svg.append("svg:image")
-                    .attr("href", "core_green.png")
                     .attr("xlink:href", "core_green.png")
                     .style("position", "absolute")
+                    .attr("height", parseInt(51 / 98 * cw) + "px")
                     .attr("width", parseInt(54 / 98 * cw) + "px")
                     .attr("x", cgx)
                     .attr("y", cgy)
                 svg.append("svg:image")
-                    .attr("href", "core_red.png")
                     .attr("xlink:href", "core_red.png")
                     .style("position", "absolute")
+                    .attr("height", parseInt(cw * 51.75 / 98) + "px")
                     .attr("width", cw + "px")
                     .attr("x", crx)
                     .attr("y", cry)
                 svg.append("svg:image")
                     .attr("xlink:href", "core_blue.png")
-                    .attr("href", "core_blue.png")
                     .style("position", "absolute")
+                    .attr("height", parseInt(cw * 51.75 / 98) + "px")
                     .attr("width", cw + "px")
                     .attr("x", leftOffset + (323 / 645 * TriWidth) - (cw / 2))
                     .attr("y", cby)
@@ -2083,10 +2086,10 @@
                                     .attr("r", avatar_radius + 2)
                                     .attr("fill", "white")
                                 svg.append("image")
-                                    // .attr("href", "page/src/assets/images/politician-photos-crop/" + response[0].name2file[name.split(' ').join('-')])
                                     .attr("xlink:href", "page/src/assets/images/politician-photos-crop/" + response[0].name2file[name.split(' ').join('-')])
                                     .attr("id", "tr-image-avatar" + name.split(" ").join("-"))
                                     .style("position", "absolute")
+                                    .attr("height", parseInt(avatar_radius * 2) + "px")
                                     .attr("width", parseInt(avatar_radius * 2) + "px")
                                     .attr("x", item.cx - avatar_radius)
                                     .attr("y", item.cy - avatar_yoff - avatar_radius)
@@ -2809,13 +2812,14 @@
         stroke: #333;
     }
 
-    .li-intro text:first-child {
+    #li-narrative-chart text:first-child {
         fill: #fff;
         stroke: #f9f9f9;
         stroke-width: 3;
+        font-size: 9px;
     }
 
-    .li-intro text+text {
+    #li-narrative-chart text+text {
         fill: #333;
         font-size: 9px;
     }
@@ -3513,17 +3517,6 @@
             fill: none;
             stroke-width: 4;
             stroke: #333;
-        }
-
-        .li-intro text:first-child {
-            fill: #fff;
-            stroke: #f9f9f9;
-            stroke-width: 3;
-        }
-
-        .li-intro text+text {
-            fill: #333;
-            font-size: 9px;
         }
 
         #li-charcard-accordion {
