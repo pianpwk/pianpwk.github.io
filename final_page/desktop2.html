@@ -952,6 +952,7 @@
                 var scene_x1 = subscenes.slice(-1)[0].x + labelSize[1] + 56;
                 var header_g = header.append("g")
                 var header_y = 4;
+                console.log(scene_x0, scene_x1, labelSize[1])
 
                 var rect = header_g.append("rect")
                     .attr("id", "liheader-rect-" + si)
@@ -969,7 +970,7 @@
                     .attr("xlink:href", "icons/" + si + ".png")
                     .attr("height", "21px")
                     .attr("width", "18px")
-                    .attr("x", (scene_x0 + scene_x1) / 2 - Math.max(30, parseInt(window.screen.availWidth / 1280 * 30)))
+                    .attr("x", (scene_x0 + scene_x1) / 2 - 30)
                     .attr("y", header_y + 37 / 2 - 10.5)
 
                 header_g.append("text")
@@ -977,7 +978,7 @@
                     .style("font-family", "TheMATTER")
                     .style("font-weight", "bold")
                     .style("font-size", 16)
-                    .attr("x", (scene_x0 + scene_x1) / 2 + Math.max(16, parseInt(window.screen.availWidth / 1280 * 16)))
+                    .attr("x", (scene_x0 + scene_x1) / 2 + 16)
                     .attr("y", header_y + 37 / 2 + 2)
                     .style("text-anchor", "middle")
                     .style("dominant-baseline", "middle")
