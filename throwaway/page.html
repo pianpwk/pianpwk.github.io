@@ -490,6 +490,11 @@
 
                 })
 
+                const a = document.createElement("a")
+                a.href = URL.createObjectURL(new Blob([JSON.stringify(cluster2points)], { type: 'text/plain' }))
+                a.setAttribute("download", "data" + scene_id + ".json")
+                a.click()
+
             }
 
         });
