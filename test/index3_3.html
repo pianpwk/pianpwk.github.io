@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    text {
+        font-family: "ProximaNova", Helvetica, Arial, sans-serif;
+        font-size: 12px;
+    }
+
+    #overlay-triangle {
+        top: 64.5px;
+        left: 64.5px;
+    }
+</style>
+
+<body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-shim.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.0/es6-shim.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="require.js"></script>
+
+    <script>
+        d3.json('vector_multi.json', function (err, response) {
+
+            console.log(err, response)
+
+            var showCores = true;
+
+            console.log(response.names)
+            console.log(response.cabinets)
+            console.log(response.vectors)
+            console.log(response.proj)
+            console.log(response.codes)
+            console.log(response.isCore)
+
+            // remove NaNs
+            var cabinets = response.cabinets
+            response.names = response.names.filter((d, i) => cabinets[i].length > 0)
+            response.vectors = response.vectors.filter((d, i) => cabinets[i].length > 0)
+            response.proj = response.proj.filter((d, i) => cabinets[i].length > 0)
+            response.codes = response.codes.filter((d, i) => cabinets[i].length > 0)
+            response.cabinets = response.cabinets.filter((d, i) => cabinets[i].length > 0)
+
+            var codeColors = {
+                '100': '#13a11d', // ทหาร
+                '010': '#b80d0d', // ทักษิณ
+                '001': '#0d42bd', // ปชป
+                '110': '#fcb023', // ทหาร + ทักษิณ
+                '101': '#40826d', // ทหาร + ปชป
+                '011': '#b489c7', // ทักษิณ + ปชป
+                '111': '#333333' // ทหาร + ทักษิณ + ปชป
+            }
+
+            var width = 900;
+            var height = 900;
+            var clusterSize = 100;
+            var clusterPadding = 2;
+            var TriHeight = 590;
+            var TriWidth = 690;
+            var leftOffset = 60;
+            var topOffset = 60;
+
+            // create svg, required mapping objects
+            var svg = d3.select("body").append("svg")
+                .style("display", "block")
+                .attr("width", width + "px")
+                .attr("height", height + "px")
+
+            var name2cabinet = {};
+            response.names.forEach(function (n, i) {
+                name2cabinet[n] = response.cabinets[i]
+            })
+
+            var name2code = {};
+            response.names.forEach(function (n, i) {
+                name2code[n] = response.codes[i]
+            })
+
+            var point2names = {};
+            response.proj.forEach(function (v, i) {
+                if (!(v in point2names)) {
+                    point2names[v] = [];
+                }
+                point2names[v].push(response.names[i]);
+            })
+
+            // create triangle, internal parts
+            svg.append("polygon")
+                .attr("points", parseInt(TriWidth / 2 + leftOffset) + "," + topOffset + " " + (TriWidth + leftOffset) + "," + (TriHeight + topOffset) + " " + leftOffset + "," + (TriHeight + topOffset))
+                .style("fill", "#eeeeee")
+                .style("stroke-width", 1)
+                .style("stroke", "black")
+
+            var centroid_x = ((TriWidth / 2 + leftOffset) + (TriWidth + leftOffset) + (leftOffset)) / 3
+            var centroid_y = ((topOffset) + (TriHeight + topOffset) + (TriHeight + topOffset)) / 3
+            var stroke_color = "#888888"
+            var stroke_width = 3
+            var stroke_dash = 6
+
+            svg.append("line")
+                .attr("x1", centroid_x)
+                .attr("y1", centroid_y)
+                .attr("x2", parseInt(TriWidth / 2 + leftOffset))
+                .attr("y2", topOffset)
+                .attr("stroke", stroke_color)
+                .attr("stroke-width", stroke_width)
+                .attr("stroke-dasharray", stroke_dash)
+
+            svg.append("line")
+                .attr("x1", centroid_x)
+                .attr("y1", centroid_y)
+                .attr("x2", TriWidth + leftOffset)
+                .attr("y2", TriHeight + topOffset)
+                .attr("stroke", stroke_color)
+                .attr("stroke-width", stroke_width)
+                .attr("stroke-dasharray", stroke_dash)
+
+            svg.append("line")
+                .attr("x1", centroid_x)
+                .attr("y1", centroid_y)
+                .attr("x2", leftOffset)
+                .attr("y2", TriHeight + topOffset)
+                .attr("stroke", stroke_color)
+                .attr("stroke-width", stroke_width)
+                .attr("stroke-dasharray", stroke_dash)
+
+            svg.append("text")
+                .attr("x", leftOffset + TriWidth / 2)
+                .attr("y", function () {
+                    return topOffset - 30
+                    // if (showCores) { return topOffset + 100 }
+                    // else { return topOffset - 30 }
+                })
+                .style("fill", "blue")
+                .style("font-size", "24px")
+                .text("ขั้วประชาธิปัตย์")
+                .style("text-anchor", "middle")
+
+            svg.append("text")
+                .attr("x", leftOffset)
+                .attr("y", function () {
+                    return topOffset + TriHeight + 30
+                    // if (showCores) { return topOffset + TriHeight - 100 }
+                    // else { return topOffset + TriHeight + 30 }
+                })
+                .style("fill", "green")
+                .style("font-size", "24px")
+                .text("ขั้วทหาร")
+                .style("text-anchor", "middle")
+
+            svg.append("text")
+                .attr("x", leftOffset + TriWidth)
+                .attr("y", function () {
+                    return topOffset + TriHeight + 30
+                    // if (showCores) { return topOffset + TriHeight - 100 }
+                    // else { return topOffset + TriHeight + 30 }
+                })
+                .style("fill", "red")
+                .style("font-size", "24px")
+                .text("ขั้วทักษิณ")
+                .style("text-anchor", "middle")
+
+            svg.append("image")
+                .attr("xlink:href", "grid.svg")
+                .attr("id", "overlay-triangle")
+                .style("position", "absolute")
+                .attr("width", 700)
+                .attr("height", 600)
+                .attr("x", 56.6)
+                .attr("y", 57)
+
+            d3.selection.prototype.moveToFront = function () {
+                return this.each(function () {
+                    this.parentNode.appendChild(this)
+                })
+            }
+
+            // TRIANGLE PACKING
+            function forceClusterCollision() {
+                let nodes
+                let radii
+                let strength = 1
+                let iterations = 1
+                let clusterPadding = 0 //addition
+
+                function radius(d) { return d.r }
+                function x(d) { return d.x + d.vx }
+                function y(d) { return d.y + d.vy }
+                function constant(x) { return function () { return x } }
+                function jiggle() { return 1e-6 } //change - PLEASE no Math.random() in there ಥ﹏ಥ
+                // function jiggle() { return (Math.random() - 0.5) * 1e-6 }
+
+                function force() {
+                    let i
+                    let n = nodes.length
+                    let tree
+                    let node
+                    let xi
+                    let yi
+                    let ri
+                    let ri2
+
+                    for (let k = 0; k < iterations; ++k) {
+                        tree = d3.quadtree(nodes, x, y).visitAfter(prepare)
+                        for (i = 0; i < n; ++i) {
+                            node = nodes[i]
+                            ri = radii[node.index]
+                            ri2 = ri * ri
+                            xi = node.x + node.vx
+                            yi = node.y + node.vy
+                            tree.visit(apply)
+                        }//for i
+                    }//for k
+
+                    function apply(quad, x0, y0, x1, y1) {
+                        let data = quad.data
+                        let rj = quad.r
+                        let r = ri + rj + clusterPadding //change
+                        if (data) {
+                            if (data.index > node.index) {
+                                let x = xi - data.x - data.vx
+                                let y = yi - data.y - data.vy
+                                let l = x * x + y * y
+                                r = ri + rj + (node.cluster !== quad.data.cluster ? clusterPadding : 0) //addition
+
+                                if (l < r * r) {
+                                    if (x === 0) x = jiggle(), l += x * x
+                                    if (y === 0) y = jiggle(), l += y * y
+                                    l = (r - (l = Math.sqrt(l))) / l * strength
+                                    node.vx += (x *= l) * (r = (rj *= rj) / (ri2 + rj))
+                                    node.vy += (y *= l) * r
+                                    data.vx -= x * (r = 1 - r)
+                                    data.vy -= y * r
+                                }//if
+                            }//if
+                            return
+                        }//if
+                        return x0 > xi + r || x1 < xi - r || y0 > yi + r || y1 < yi - r
+                    }//apply
+                }//force
+
+                function prepare(quad) {
+                    if (quad.data) return quad.r = radii[quad.data.index];
+                    for (let i = quad.r = 0; i < 4; ++i) {
+                        if (quad[i] && quad[i].r > quad.r) {
+                            quad.r = quad[i].r
+                        }//if
+                    }//for i
+                }
+
+                function initialize() {
+                    if (!nodes) return;
+                    let i, n = nodes.length, node
+                    radii = new Array(n)
+                    for (i = 0; i < n; ++i) node = nodes[i], radii[node.index] = +radius(node, i, nodes)
+                }
+
+                force.initialize = function (_) {
+                    nodes = _
+                    initialize()
+                    return force
+                }
+
+                force.iterations = function (_) {
+                    return arguments.length ? (iterations = +_, force) : iterations
+                }
+
+                //I wish strength could be a function of the node as well...
+                force.strength = function (_) {
+                    return arguments.length ? (strength = +_, force) : strength
+                }
+
+                force.radius = function (_) {
+                    return arguments.length ? (radius = typeof _ === "function" ? _ : constant(+_), force) : radius
+                }
+
+                //addition - the actual pixels of padding
+                force.clusterPadding = function (_) {
+                    return arguments.length ? (clusterPadding = +_, force) : clusterPadding
+                }
+
+                return force
+            }//function forceCollision
+
+            var counter = 0;
+            var cluster2points = {};
+            Object.entries(point2names).forEach(function ([k, v]) {
+
+                // cluster points in full | 1/2 | 1/6 circle
+                var points = { name: 'head', children: [] }
+                var n_slices;
+                var slice_radius;
+                var scale_circle;
+                var forceStrength;
+
+                // determine force Strength for simulation
+                if (response.isCore[k]) {
+                    forceStrength = 0.36
+                } else if (v.length < 10) {
+                    forceStrength = 0.56
+                } else {
+                    forceStrength = 0.44
+                }
+
+                // determine # of slices
+                if (response.isCore[k]) {
+                    n_slices = 6;
+                } else if (name2code[v[0]] == "111") {
+                    n_slices = 1;
+                } else {
+                    n_slices = 2;
+                }
+
+                // other params
+                slice_radius = 18 * v.length / 80.0
+                scale_circle = 1.4
+
+                // form clusters of partial circles
+                var color = ['red', 'green', 'blue', 'black', 'yellow', 'brown']
+                for (i = 0; i < n_slices; i++) {
+                    // calculate focal x,y for each slice
+                    var radians = i * (2.0 * Math.PI / n_slices)
+                    var dx = Math.sin(radians) * slice_radius
+                    var dy = Math.cos(radians) * slice_radius
+                    // add slice of points to simulation input
+                    v.forEach(function (name) {
+                        points.children.push({
+                            cluster: i,
+                            r: name2cabinet[name].length,
+                            focusX: dx,
+                            focusY: dy,
+                            data: {
+                                name: name,
+                                value: name2cabinet[name].length,
+                                code: name2code[name]
+                            }
+                        })
+                    })
+                }
+
+                cluster2points[k] = {
+                    children: points.children
+                }
+
+                var node = svg.append("g")
+                    .selectAll("circle")
+                    .data(points.children).enter()
+                    .append("circle")
+                    .attr("r", d => d.r * scale_circle)
+                    .style("fill", d => color[d.cluster])
+                // create simulation from list of points
+                var sim = d3.forceSimulation()
+                    .force("collide", forceClusterCollision()
+                        .radius(d => d.r + 1)
+                        .strength(1.2)
+                        .clusterPadding(4)
+                    )
+                    .force("x", d3.forceX().x(d => d.focusX).strength(forceStrength))
+                    .force("y", d3.forceY().y(d => d.focusY).strength(forceStrength))
+
+                sim.nodes(cluster2points[k].children).on("tick", ticked).on("end", endSim)
+                var cx, cy;
+                [cx, cy] = vec2xy(parseFloat(k.split(",")[0]), parseFloat(k.split(",")[1]))
+                function ticked() {
+                    node
+                        .attr("cx", d => d.x + cx)
+                        .attr("cy", d => d.y + cy)
+                }
+
+                function endSim() {
+                    counter += 1;
+                    if (counter == Object.entries(point2names).length) {
+                        doRest();
+                    }
+                }
+
+            })
+
+            function vec2xy(vx, vy) {
+                var cx = parseInt((vx + 0.7071) * TriWidth / 1.4142 + leftOffset)
+                var cy = parseInt((0.81649 - vy) * TriHeight / (0.81649 + 0.40825) + topOffset)
+                return [cx, cy]
+            }
+
+            function doRest() {
+
+                d3.select("svg").selectAll("circle").remove()
+
+                Object.keys(cluster2points).forEach(function (k, i) {
+
+                    d = cluster2points[k]
+                    var cx, cy;
+                    [cx, cy] = vec2xy(parseFloat(k.split(",")[0]), parseFloat(k.split(",")[1]))
+                    var code = d.children[0].data.code
+
+                    var points = d.children.filter(d => d.cluster == 0)
+                    var ratio = points[0].r / points[0].data.value
+                    var alpha = 1.6
+
+                    // rotates point around (x0,y0) by theta
+                    function rotateXY(x0, y0, dx, dy, theta) {
+                        var x1 = x0 + Math.cos(theta) * dx - Math.sin(theta) * dy;
+                        var y1 = y0 + Math.sin(theta) * dx + Math.cos(theta) * dy;
+                        return [x1, y1]
+                    }
+                    var rotate_theta;
+                    if (code == '100') { // ทหาร
+                        rotate_theta = 4 * Math.PI / 3.0
+                    } else if (code == '010') { // ทักษิณ
+                        rotate_theta = 2 * Math.PI / 3.0
+                    } else if (code == '001') { // ปชป
+                        rotate_theta = 0
+                    } else if (code == '110') { // ทหาร + ทักษิณ
+                        rotate_theta = Math.PI
+                    } else if (code == '101') { // ทหาร + ปชป
+                        rotate_theta = 5 * Math.PI / 3.0
+                    } else if (code == '011') { // ทักษิณ + ปชป
+                        rotate_theta = Math.PI / 3.0
+                    } else { // 111
+                        rotate_theta = Math.PI * 0.42 // random shit
+                    }
+
+                    // recreate clusters
+                    var g_circles = svg.append("g")
+                        .attr("id", "circles-g-" + i)
+                    var circles = g_circles.selectAll("circle")
+                        .data(points)
+                        .enter().append("circle")
+                        .attr("fill", function (d) {
+                            return codeColors[d.data.code]
+                        })
+                        .attr("cx", function (d) {
+                            if (points.length == 1) {
+                                return rotateXY(cx, cy, 0, d.r / ratio * alpha, rotate_theta)[0];
+                            } else {
+                                return rotateXY(cx, cy, d.x / ratio * alpha, d.y / ratio * alpha, rotate_theta)[0]
+                            }
+                        })
+                        .attr("cy", function (d) {
+                            if (points.length == 1) {
+                                return rotateXY(cx, cy, 0, d.r / ratio * alpha, rotate_theta)[1];
+                            } else {
+                                return rotateXY(cx, cy, d.x / ratio * alpha, d.y / ratio * alpha, rotate_theta)[1]
+                            }
+                        })
+                        .attr("r", function (d, j) {
+                            return Math.round(d.r / ratio * alpha)
+                        })
+                        .attr("id", function (d, j) {
+                            return "circle-" + i + "-" + j
+                        })
+
+                    circles.on("mouseover", function (d, j) {
+                        d3.select("#circletext-" + i + "-" + j).style("visibility", "visible")
+                    }).on("mouseout", function (d, j) {
+                        d3.select("#circletext-" + i + "-" + j).style("visibility", "hidden")
+                    })
+
+                })
+
+                // add text on top of everything
+                Object.keys(cluster2points).forEach(function (k, i) {
+
+                    d = cluster2points[k]
+                    var points = d.children.filter(d => d.cluster == 0)
+
+                    var g_circletext = svg.append("g")
+                        .attr("id", "circletext-g-" + i)
+
+                    var circletext = g_circletext.selectAll("text")
+                        .data(points)
+                        .enter().append("text")
+                        .attr("class", "text")
+                        .attr("x", function (d, j) {
+                            return d3.select("#circle-" + i + "-" + j).node().getAttribute("cx")
+                        })
+                        .attr("y", function (d, j) {
+                            return d3.select("#circle-" + i + "-" + j).node().getAttribute("cy")
+                        })
+                        .text(d => d.data.value + "," + d.data.name)
+                        .style("position", "absolute")
+                        .style("background-color", "white")
+                        .style("fill", "black")
+                        .style("font-size", "16px")
+                        .style("font-weight", "bold")
+                        .attr("id", function (d, j) {
+                            return "circletext-" + i + "-" + j
+                        })
+                        .style("visibility", "hidden")
+
+                })
+
+            }
+
+        });
+
+    </script>
+
+</body>
